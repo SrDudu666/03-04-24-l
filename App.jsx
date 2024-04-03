@@ -1,75 +1,50 @@
-import React, {useState} from 'react'
-import './App.css'
+import React, { useState,useEffect } from 'react';
+import './App.css';
 
+const quadroInicial = Array(9).fill('');
 
-const cambio = {
-  BRL: 1,    //REAL
-  USD: 0.20, //DOLAR AMERICANO
-  EUR: 0.18, //EURO
-  GBP: 0.16, //LIBRA ESTERLINA
-  JPY: 30.25 //IENE JAPONES
+const App = () => {
+  const [quadro, setQuadro] = useState(quadroInicial);
+  const [jogadorAtual, setJogadorAtual] = useState('X');
+  const [vencedor, setVencedor] = useState('');
+  const [empate, setEmpate] = useState(falso);
 }
 
-const Conversao = () => {
-  const [quantidadeInicial, setQuantidadeInicial] = useState(0);
-  const [quantidadeFinal, setQuantidadeFinal] = useState(0);
-  const [conversaoInicial, setConversaoInicial] = useState('BRL');
-  const [conversaoFinal, setConversaoFinal] = useState('USD');
+const handleClick = (index) => {
+  //verifica se o quadro está preenchido ou empatado ou com vencedores
+  if(
+    quadro[index] !== '' || vencedor || empate
+  )
+  {
+    return
+  }
 
+  const novoQuadro = [...quadro]; //quebra o array preenchido para fazer um novo
+  novoQuadro[index] = jogadorAtual; //chama o novo na posição do index e coloca o jogador atual como jogador a ser clicado "X"
+  setQuadro(novoQuadro);//estado do quadro muda para quadro novo
 
-const calculo = () => {
-  const calc = cambio[conversaoInicial] / cambio[conversaoFinal];
-  const valorFinal = quantidadeInicial / calc
-
-  setQuantidadeFinal(valorFinal.toFixed(2));
+  const proximoJogador = jogadorAtual === 'X' ? 'O' : 'X'; //alterna o jogador
+  setJogadorAtual(proximoJogador);
 };
 
-return (
-  <div className="conversao">
-    <h2>Conversor de Moedas</h2>
-  <div className="generico">
+const calcularVencedor = (quadradin) => {
+  const condicoesParaVencer = [[0,1,2], [3,4,5], [6,7,8],//linhas
+                              [0,3,6], [1,4,7], [2,5,8],//colunas
+                              [0,4,8], [2,4,6]];//diagonais
 
-  <input 
-    type="number"
-    value={quantidadeInicial}
-    onChange={(e) => setQuantidadeInicial(e.target.value)} 
-    />
-
-    <select
-    value={conversaoInicial}
-    onChange={(e) => setConversaoInicial(e.target.value)}>
-
-      {Object.keys(cambio).map((parametro) => (
-        <option key={parametro} value={parametro}>
-          {parametro}
-          </option>
-      ))}
-      </select>
-
-      para
-
-      <select
-    value={conversaoFinal}
-    onChange={(e) => setConversaoFinal(e.target.value)}>
-
-      {Object.keys(cambio).map((parametro) => (
-        <option key={parametro} value={parametro}>
-          {parametro}
-          </option>
-      ))}
-      </select>
-
-      
-    </div>
-    <div className="botao">
-    <button onClick={calculo}>Converter</button>
-    </div>
-
-    <p>{ `${quantidadeInicial} ${conversaoInicial} equivalente a ${quantidadeFinal} ${conversaoFinal}` }</p> 
-    
-    </div>
-);
-
+  for(let condicao of condicoesParaVencer){
+    const[a,b,c] = condicao;
+    if (
+      quadradin[a] &&                     //verifica se tem algum valor dentro da célula
+      quadradin[a] === quadradin[b] &&    //verifica se o valor e posição da celula é igual a outra
+      quadradin[a] === quadradin[c]       //verifica se o valor e posição da celula é igual a outra
+    ){
+      return quadradin[a]
+    }
+  }
+  return null; //retorna null se não tiver vencedor
 };
 
-export default Conversao;
+useEffect(() => {
+
+})
